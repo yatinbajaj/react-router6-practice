@@ -1,61 +1,50 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useContext } from "react";
 import "./Login.css";
+import AuthContext from "../store/auth-context";
+
 function Login() {
     const userEmail = useRef();
     const userPassword = useRef();
-    const [isAuthorized, setIsAuthorized] = useState(false);
+    const ctx = useContext(AuthContext);
 
-    useEffect(() => {
-        if (localStorage.getItem("isAuthorized") === 1) {
-            setIsAuthorized(true);
-        }
-    }, []);
-
-    const authorizeHandler = () => {
+    const submitHandler = (event) => {
+        event.preventDefault();
         if (
             userEmail.current.value === "root" &&
             userPassword.current.value === "chitkara"
         ) {
-            localStorage.setItem("isAuthorized", "1");
-            setIsAuthorized(true);
-        }
+            ctx.loginHandler();
+          }
     };
 
-    const logoutHandler = () => {
-        localStorage.removeItem("isAuthorized");
-        setIsAuthorized(false);
-    };
 
     return (
         <React.Fragment>
-            <div className="container">
-                <div>
-                    <label htmlFor="my-email">Email</label>
-                    <input type="text" id="my-email" ref={userEmail} />
-                </div>
-                <div>
-                    <label htmlFor="my-password">Password</label>
-                    <input type="password" id="my-password" ref={userPassword} />
-                </div>
-                <div className="actions">
-                    {!isAuthorized && <button type="button" onClick={authorizeHandler}>
-                        Authorize
-                    </button>}
-
-                    {isAuthorized && <button type="button" onClick={logoutHandler}>
-                        Log out
-                    </button>}
-
-                </div>
+        {!ctx.isLoggedIn && (
+            <div className="login-heading">
+                Login
             </div>
-            {isAuthorized && (
-                <div className="container">Congratulation You are Authorized</div>
-            )}
-            {!isAuthorized && (
-                <div className="container">
-                    Please Try Again, Credentials are incorrect
-                </div>
-            )}
+        )}
+            <div className="container">
+                <form onSubmit={submitHandler}>
+                    <div className="controls">
+                        <label htmlFor="my-email">Email</label>
+                        <input type="text" id="my-email" ref={userEmail} />
+                    </div>
+                    <div className="controls">
+                        <label htmlFor="my-password">Password</label>
+                        <input type="password" id="my-password" ref={userPassword} />
+                    </div>
+                    <div className="actions">
+                        {!ctx.isLoggedIn && <button type="submit" >
+                            Authorize
+                        </button>}
+                    </div>
+                </form>
+            </div>
+
+            
+            
         </React.Fragment>
     );
 }

@@ -27,4 +27,4 @@ function Meal({movieList}) {
     )
 }
 
-export default Meal
+export default React.memo(Meal)
